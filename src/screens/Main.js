@@ -7,29 +7,15 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import ProfileScreen from './main/Profile';
 import FriendGroupsScreen from './main/FriendGroups';
+import NotificationsScreen from './main/Notifications';
+import EventsScreen from './main/Events';
 
 const Tab = createBottomTabNavigator();
-
-import { BackgroundWrapper } from '../components';
-
-const HomeScreenTwo = () => {
-    return (
-        <BackgroundWrapper>
-            <View style={styles.container}>
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20}}>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.bodyText}>Events</Text>
-                    </View>
-                </View>
-            </View>
-        </BackgroundWrapper>
-    )
-}
 
 const Main = (props) => {    
     return (
         <Tab.Navigator 
-            initialRouteName='FriendGroups'
+            initialRouteName='Profile'
 
             screenOptions={{
                 tabBarShowLabel: false,
@@ -37,12 +23,13 @@ const Main = (props) => {
                 tabBarInactiveTintColor: 'white',
                 tabBarStyle: [
                     {
-                        backgroundColor: 'transparent',
-                        position: 'absolute',
-                        borderTopWidth: 1,
-                        borderTopColor: 'white',
+                        backgroundColor: '#2e1a4d',
+                        borderTopWidth: 0,
+                        // position: 'absolute',
+                        // borderTopWidth: 0,
+                        // borderTopColor: 'white',
                         height: 60,
-                        elevation: 0,
+                        // elevation: 0,
                     },
                     null
                 ]
@@ -53,26 +40,37 @@ const Main = (props) => {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <Icon name="ios-people" color={color} size={30}/>
+                        <Icon name="ios-people" color={color} size={26}/>
                     )
                 }}
                 />
             <Tab.Screen 
                 name="Events" 
-                component={HomeScreenTwo} 
+                component={EventsScreen} 
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <Icon name="ios-map" color={color} size={30}/>
+                        <Icon name="ios-map" color={color} size={26}/>
                     )
                 }}/>
+
+            <Tab.Screen 
+                name="Notifications" 
+                component={NotificationsScreen} 
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color }) => (
+                        <Icon name="notifications" color={color} size={26}/>
+                    )
+                }}/>
+            
             <Tab.Screen 
                 name='Profile' 
                 component={ProfileScreen} 
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <Icon name="ios-person-circle" color={color} size={30}/>
+                        <Icon name="ios-person-circle" color={color} size={26}/>
                     )
                 }}/>
         </Tab.Navigator>    

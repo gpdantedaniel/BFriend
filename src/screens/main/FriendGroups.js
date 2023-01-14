@@ -7,13 +7,8 @@ import { collection, doc, documentId, getDoc, getDocs, getFirestore, onSnapshot,
 import { getAuth } from 'firebase/auth';
 
 const FriendGroups = ({ navigation }) => {
-  const [groups, setGroups] = useState([]);
-  const [groupInvitations, setGroupInvitations] = useState([]);
-
+  const [groups, setGroups] = useState({});
   console.log('groups: ', groups);
-  console.log('groupInvitations: ', groupInvitations);
-
-  const displayItems = [...groups, ...groupInvitations];
 
   /*
   const getUser = (userID) => {
@@ -39,78 +34,78 @@ const FriendGroups = ({ navigation }) => {
   }
   */
 
-  const fetchGroupInvitations = async (uid) => {
-    const colGroupInvitationsRef = collection(getFirestore(), 'users', uid, 'groupInvitations');
-    const q = query(colGroupInvitationsRef);
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({type: 'invitation', invitationId: doc.id, ...doc.data()}));
-  }
-
   useEffect(() => {
     const currentUser = getAuth().currentUser;
     const docRef = doc(getFirestore(), 'users', currentUser.uid);
 
-    onSnapshot(docRef, (snapshot) => {
+    getDoc(docRef).then((snapshot) => {
       if (snapshot.exists) {
         const data = snapshot.data();
-        const groups = Object.keys(data.groups).map(key => ({type: 'group', groupId: key, ...data.groups[key]}));
+        const groupIds = data.groups;
 
-        groups ? setGroups(groups) : null;
+        groupIds.map(groupId => {
+          const docRef = doc(getFirestore(), 'groups', groupId);
+
+          getDoc(docRef).then((snapshot) => {
+            if (snapshot.exists) {
+              const data = snapshot.data();
+              const group = {[groupId]: data};
+              setGroups(loadedGroups => ({...loadedGroups, ...group}))
+            }
+          })
+        })
+        
       }
     })
 
-    fetchGroupInvitations(currentUser.uid).then((invitations) => {
-      setGroupInvitations(invitations);
-    })
+
+    const getGroupsData = async (groups) => {
+      return groups.map(group => {
+        const docRef = doc(getFirestore(), 'groups', groupId);
+          getDoc(docRef).then((snapshot) => {
+            if (snapshot.exists) {
+              const data = snapshot.data();
+              return data;
+            }
+          })
+      })
+    }
+
+ 
+    
+    const fetchGroupInvitations = async (uid) => {
+      const colGroupInvitationsRef = collection(getFirestore(), 'users', uid, 'groupInvitations');
+      const q = query(colGroupInvitationsRef);
+  
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map((doc) => ({type: 'invitation', invitationId: doc.id, ...doc.data()}));
+    }
+
   }, [])
 
-  if (displayItems.length !== 0) {
+  if (Object.keys(groups).length !== 0) {
     return (
       <BackgroundWrapper>
         <SimpleInterfaceContainer style={{overflow: 'scroll', backgroundColor: 'rgba(0, 0, 0, 0.25)'}}>
 
-          <FlatList style={{ flex: 1, width: 360, maxHeight: '100%',}} numColumns={1} horizontal={false} data={displayItems} renderItem={({item}) => {
-
-            if (item.type === 'group') {
-              return (    
-                <TouchableOpacity style={listStyles.listItem} onPress={() => navigation.navigate('Group', {groupID: item, data: joinedItems[item]})}>
-                  <Icon name='people-circle-outline' size={30} color='white' style={{paddingRight: 12,}}/>
-                  <View style={{flexDirection: 'column', justifyContent: 'center'}}>
-                    <Text style={{...styles.bodyText, color: '#F2BE5C', textAlign: 'left'}} numberOfLines={1} ellipsizeMode='tail'>
-                      {item.groupname}
-                    </Text>
-                    <Text style={{...styles.bodyText, textAlign: 'left', fontSize: 13}} numberOfLines={1} ellipsizeMode='tail'>
-                      Most recent text message Most recent text message
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )
-            } else {
-              return (
-                <TouchableOpacity style={listStyles.listItem} onPress={() => navigation.navigate('Invitation', {groupID: item, data: joinedItems[item]})}>
-                  <Icon name='ios-mail' size={30} color='white' style={{paddingRight: 12,}}/>
-                  <View style={{flexDirection: 'column', justifyContent: 'center'}}>
-                    <Text style={{...styles.bodyText, color: '#F2BE5C', textAlign: 'left'}} numberOfLines={1} ellipsizeMode='tail'>
-                      An Invitation to {item.groupname}
-                    </Text>
-                    <Text style={{...styles.bodyText, textAlign: 'left', fontSize: 13}} numberOfLines={1} ellipsizeMode='tail'>
-                      From: {item.author}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )
-            }
-
-         
-
-
+          <FlatList style={{ flex: 1, width: 360, maxHeight: '100%',}} numColumns={1} horizontal={false} data={Object.keys(groups)} renderItem={({item}) => {
+            return (
+              <TouchableOpacity style={listStyles.listItem} onPress={() => navigation.navigate('Group', {groupId: item, data: groups[item]})}>
+                <Icon name='people-circle-outline' size={30} color='white' style={{paddingRight: 12,}}/>
+                <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+                  <Text style={{...styles.bodyText, color: '#F2BE5C', textAlign: 'left'}} numberOfLines={1} ellipsizeMode='tail'>
+                    {groups[item].groupname}
+                  </Text>
+                  <Text style={{...styles.bodyText, textAlign: 'left', fontSize: 13}} numberOfLines={1} ellipsizeMode='tail'>
+                    {groups[item].eventId === '' ? 'No event happening yet' : 'An event is happening!'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )
           }}/>
-
            
         </SimpleInterfaceContainer>
         <PrimaryButton style={{marginBottom: 20, marginTop: 20, position: 'relative'}} title='+ Create Group' onPress={() => navigation.navigate("GroupCreation")}/>
-        <View style={{height: 60}}/>
       </BackgroundWrapper>
     )
   }

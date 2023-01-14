@@ -19,18 +19,17 @@ const GroupCreation = ({ navigation }) => {
   const onCreateGroup = () => {
     const currentUser = getAuth().currentUser;
     const groupColRef = collection(getFirestore(), 'groups');
-    const groupInfo = {groupname: groupname, users: [currentUser.uid]};
+    const groupInfo = {
+      groupname: groupname, 
+      members: [currentUser.uid],
+      eventId: '',
+    };
 
     addDoc(groupColRef, groupInfo).then((groupDocRef) => {      
       const docRef = doc(getFirestore(), 'users', currentUser.uid);
-      const userGroupsUpdate = {
-        [`groups.${groupDocRef.id}`]: {
-          groupname: groupname
-        }
-      }
+      const update = {groups: arrayUnion(groupDocRef.id)};
 
-      updateDoc(docRef, userGroupsUpdate).then((result) => {
-        console.log(result)
+      updateDoc(docRef, update).then(() => {
         navigation.goBack();
 
       }).catch((error) => {

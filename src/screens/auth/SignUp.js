@@ -19,10 +19,12 @@ const SignUp = (props) => {
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       setDoc(doc(getFirestore(), "users", userCredential.user.uid), {
+        username: username, 
+        fullname: fullname,            
+        email: email,
         birthyear: birthyear,
-        email: email, 
-        fullname: fullname,
-        username: username,        
+        groups: [],
+        events: [],
       }).then((result) => {
         console.log(result)
       }).catch((error) => {

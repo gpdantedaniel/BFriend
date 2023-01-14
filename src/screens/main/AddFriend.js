@@ -4,15 +4,39 @@ import { BackgroundWrapper, BottomBackButton, SimpleInterfaceContainer, GhostTex
 import styles from '../../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { collection, getDocs, getFirestore, where, query, addDoc } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 const AddFriend = ({ navigation, route }) => { 
   const groupId = route.params.groupId;
   const groupData = route.params.groupData;
+
   const [recipient, setRecipient] = useState('');
   const [message, setMessage] = useState('');
 
   console.log('groupData: ', groupData);
   console.log('groupId: ', groupId);
+
+  const onSend = () => {
+    const usersColRef = collection(getFirestore(), 'users');
+    const q = query(usersColRef, where('username', '==', recipient));
+
+    getDocs(q).forEach((doc) => {
+      const recipientId = doc.id;
+      const authorUid = getAuth().currentUser.uid;
+      const groupInvitationsColRef = collection(getFirestore(), 'users', recipientId, 'groupInvitations');
+
+      addDoc(groupInvitationsColRef, {
+        groupId: groupId,
+        groupname: groupData.groupname,
+        author: authorUid,
+        message: message,
+      }).then(() => {
+        navigation.goBack();
+      })
+
+    })
+      
+  }
 
   const onSendInvitation = async () => {
     console.log('recipient: ', recipient);
@@ -24,10 +48,9 @@ const AddFriend = ({ navigation, route }) => {
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
-
-      console.log('user doc.id: ', doc.id);
       const recipientId = doc.id;
       const colGroupInvitationsRef = collection(getFirestore(), 'users', recipientId, 'groupInvitations');
+      
       addDoc(colGroupInvitationsRef, {
         author: 'author',
         message: message,
@@ -35,8 +58,6 @@ const AddFriend = ({ navigation, route }) => {
         groupId: groupId,
       })
     })
-
-    
   }
 
   return (

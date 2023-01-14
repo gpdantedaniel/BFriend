@@ -28,6 +28,8 @@ import DeleteAccountScreen from './src/screens/main/DeleteAccount'
 import GroupCreationScreen from './src/screens/main/GroupCreation'
 import GroupScreen from './src/screens/main/Group'
 import AddFriendScreen from './src/screens/main/AddFriend'
+import InvitationScreen from './src/screens/main/Invitation'
+import EventInvitationScreen from './src/screens/main/EventInvitation'
 
 // Redux imports
 import { store } from './src/redux/store';
@@ -98,14 +100,16 @@ const AppWrapped = () => {
       <StatusBar style="light"/>
       <SafeAreaProvider>
         <Stack.Navigator initialRouteName="Main">
-            <Stack.Screen name="Main" component={MainScreen} auth={auth} options={defaultScreenOptions}/>
-            <Stack.Screen name="HelpAndContact" component={HelpAndContactScreen} options={defaultScreenOptions}/>
-            <Stack.Screen name='EditProfile' component={EditProfileScreen} options={defaultScreenOptions}/>
-            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={defaultScreenOptions}/>
-            <Stack.Screen name='DeleteAccount' component={DeleteAccountScreen} options={defaultScreenOptions}/>
-            <Stack.Screen name='GroupCreation' component={GroupCreationScreen} options={defaultScreenOptions}/>
-            <Stack.Screen name='Group' component={GroupScreen} options={defaultScreenOptions}/>
-            <Stack.Screen name='AddFriend' component={AddFriendScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name="Main" component={MainScreen} auth={auth} options={defaultScreenOptions}/>
+          <Stack.Screen name="HelpAndContact" component={HelpAndContactScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='EditProfile' component={EditProfileScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='DeleteAccount' component={DeleteAccountScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='GroupCreation' component={GroupCreationScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='Group' component={GroupScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='AddFriend' component={AddFriendScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='Invitation' component={InvitationScreen} options={defaultScreenOptions}/>
+          <Stack.Screen name='EventInvitation' component={EventInvitationScreen} options={defaultScreenOptions}/>
         </Stack.Navigator>
       </SafeAreaProvider>
     </NavigationContainer>

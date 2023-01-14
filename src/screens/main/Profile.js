@@ -10,13 +10,6 @@ import { BackgroundWrapper, PrimaryButton, GhostButton, SimpleInterfaceContainer
 const Profile = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState({});
   console.log('userInfo: ', userInfo);
-  // console.log('userInfo: ', userInfo);
-  // const [username, setUsername] = useState('');
-  // const [fullname, setFullname] = useState('');
-  // console.log('username: ', username);
-  // console.log('fullname: ', fullname);
-  // setUsername(data.username);
-  // setFullname(data.fullname);
 
   useEffect(() => {
     const currentUser = getAuth().currentUser;
@@ -45,11 +38,10 @@ const Profile = ({ navigation }) => {
             <Icon name="ios-person-circle-outline" color={'white'} size={120}/>
             <Text style={styles.bigHeading}>{userInfo.username ? userInfo.username : ''}</Text>
             <Text style={styles.subHeading}>{userInfo.fullname ? userInfo.fullname : ''}</Text>
-            <PrimaryButton title='Edit My Profile' onPress={() => navigation.navigate('EditProfile', {username, fullname})}/>
+            <PrimaryButton title='Edit My Profile' onPress={() => navigation.navigate('EditProfile', {username: userInfo.username, fullname: userInfo.fullname})}/>
             <GhostButton title='Sign Out' onPress={() => onSignOut()}/>
         </SimpleInterfaceContainer>
         <Text style={styles.helpAndContact} onPress={() => navigation.navigate('HelpAndContact')}>Help & Contact</Text>
-        <View style={{height: 60}}></View>
     </BackgroundWrapper>
   )
 }

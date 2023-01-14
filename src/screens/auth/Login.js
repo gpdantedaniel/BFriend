@@ -28,7 +28,7 @@ const Login = ({ navigation }) => {
                 <GhostTextInput placeholder='Password' onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
                 <PrimaryButton title={'Login'} onPress={() => onLogin()}/>
                 <View style={styles.textContainer}>
-                    <Text style={styles.bodyText} onPress={() => navigation.navigate("ChangePassword")}>Forgot password? Click here</Text>
+                    <Text style={styles.bodyText} onPress={() => navigation.navigate("ChangePassword")}>Forgot password?</Text>
                 </View>
             </SimpleInterfaceContainer>
             <GhostButton style={{marginBottom: 60}} title='Create Account' onPress={() => navigation.navigate("SignUp")}/>
