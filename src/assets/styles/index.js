@@ -1,6 +1,22 @@
 import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
+
+  /* Text Styles */
+  heading: { 
+    fontFamily: 'Inter-ExtraBold',
+    color: 'white',
+    fontSize: 21,
+  },
+
+
+
+
+
+
+
+
+
   subHeading: {
     fontFamily: 'Inter-Bold',
     fontSize: 18,
@@ -42,12 +58,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  heading: { 
-    color: 'white',
-    fontFamily: 'Inter-ExtraBold',
-    fontSize: 21,
-    textAlign: 'center'
-  },
 
   backgroundImage: {
     flex: 1,

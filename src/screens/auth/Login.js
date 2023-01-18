@@ -11,13 +11,11 @@ const Login = ({ navigation }) => {
 
     const onLogin = () => {
     const auth = getAuth();
-        signInWithEmailAndPassword(auth, email, password)
-            .then((result) => {
-                console.log(result);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        signInWithEmailAndPassword(auth, email, password).then((result) => {
+            console.log(result);
+        }).catch((error) => {
+            console.log(error);
+        });
     };
 
     return (
@@ -27,9 +25,9 @@ const Login = ({ navigation }) => {
                 <GhostTextInput placeholder='Email' onChangeText={(email) => setEmail(email)}/>
                 <GhostTextInput placeholder='Password' onChangeText={(password) => setPassword(password)} secureTextEntry={true}/>
                 <PrimaryButton title={'Login'} onPress={() => onLogin()}/>
-                <View style={styles.textContainer}>
-                    <Text style={styles.bodyText} onPress={() => navigation.navigate("ChangePassword")}>Forgot password?</Text>
-                </View>
+                <Text style={styles.bodyText} onPress={() => navigation.navigate("ChangePassword")}>
+                    Forgot password?
+                </Text>
             </SimpleInterfaceContainer>
             <GhostButton style={{marginBottom: 60}} title='Create Account' onPress={() => navigation.navigate("SignUp")}/>
         </BackgroundWrapper>

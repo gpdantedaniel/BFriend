@@ -9,7 +9,10 @@ const ResetPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
 
   const onChangePassword = () => {
+    
     navigation.navigate("EmailSent");
+
+    /*
     const auth = getAuth();
     sendPasswordResetEmail(auth, email)
       .then(() => {
@@ -18,6 +21,7 @@ const ResetPassword = ({ navigation }) => {
       .catch((error) => {
         console.log(error)
       })
+      */
   }
 
   return (

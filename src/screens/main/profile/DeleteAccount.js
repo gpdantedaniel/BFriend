@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native'
 import React, { useState } from 'react'
-import styles from '../../assets/styles'
+import styles from '../../../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAuth, EmailAuthProvider, reauthenticateWithCredential, deleteUser } from 'firebase/auth';
-import { BackgroundWrapper, PrimaryButton, BottomBackButton, GhostTextInput, SimpleInterfaceContainer } from '../../components'
+import { BackgroundWrapper, PrimaryButton, BottomBackButton, GhostTextInput, SimpleInterfaceContainer, Title } from '../../../components'
 import { doc, getFirestore, deleteDoc } from 'firebase/firestore';
 
 const DeleteAccount = ({ navigation }) => {
@@ -30,7 +30,8 @@ const DeleteAccount = ({ navigation }) => {
   }
 
   return (
-    <BackgroundWrapper source={require('../../assets/images/BFriend_bg.png')} resizeMode="cover" style={styles.backgroundImage}>
+    <BackgroundWrapper source={require('../../../assets/images/BFriend_bg.png')} resizeMode="cover" style={styles.backgroundImage}>
+      <Title title='Delete Account'/>
       <SimpleInterfaceContainer>
         <Icon name="ios-warning" color={'white'} size={120}/>
         <View style={styles.textContainer}>

@@ -6,7 +6,7 @@ const BackgroundWrapper = ({ children, style }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={safeViewStyles(insets)}>
+    <View style={{...safeViewStyles(insets), overflow: 'hidden'}}>
       <ImageBackground source={require('../../assets/images/BFriend_bg.png')} resizeMode="cover" style={{...styles.backgroundImage, ...style}}>
         {children}
       </ImageBackground>

@@ -15,7 +15,7 @@ const SignUp = (props) => {
   const [password, setPassword] = useState('');
 
   const onSignUp = () => {
-    const auth = getAuth();
+    const auth = getAuth(); 
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       setDoc(doc(getFirestore(), "users", userCredential.user.uid), {

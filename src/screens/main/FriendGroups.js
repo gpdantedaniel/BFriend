@@ -1,39 +1,19 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons';
-import { BackgroundWrapper, SimpleInterfaceContainer, PrimaryButton } from '../../components'
+import { BackgroundWrapper, SimpleInterfaceContainer, PrimaryButton, Title } from '../../components'
 import styles from '../../assets/styles'
-import { collection, doc, documentId, getDoc, getDocs, getFirestore, onSnapshot, query, where } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { useSelector } from 'react-redux';
+import { selectGroups } from '../../redux/slice/groupsSlice';
 
 const FriendGroups = ({ navigation }) => {
-  const [groups, setGroups] = useState({});
-  console.log('groups: ', groups);
+
+  const groups = useSelector(selectGroups);
 
   /*
-  const getUser = (userID) => {
-    const docRef = doc(getFirestore(), 'users', userID);
-    getDoc(docRef).then((userDoc) => {
-      if (userDoc.exists) {
-        const data = userDoc.data();
-        console.log(data.username);
-        return data.username;
-      }
-    })
-  }
-
-  const getGroup = (groupID) => {
-    const docRef = doc(getFirestore(), 'groups', groupID);
-    onSnapshot(docRef, (doc) => {
-      if (doc.exists) {
-        const data = doc.data();
-        const newGroup = {[groupID]: data};
-        setGroups(currentGroups => ({...currentGroups, ...newGroup}))
-      }
-    })
-  }
-  */
-
+  const [groups, setGroups] = useState({});
+  console.log('groups: ', groups);
+  
   useEffect(() => {
     const currentUser = getAuth().currentUser;
     const docRef = doc(getFirestore(), 'users', currentUser.uid);
@@ -82,13 +62,15 @@ const FriendGroups = ({ navigation }) => {
     }
 
   }, [])
+  */
 
   if (Object.keys(groups).length !== 0) {
     return (
       <BackgroundWrapper>
-        <SimpleInterfaceContainer style={{overflow: 'scroll', backgroundColor: 'rgba(0, 0, 0, 0.25)'}}>
+        <Title title='Friend Groups'/>
+        <SimpleInterfaceContainer style={{overflow: 'scroll', backgroundColor: 'rgba(0, 0, 0, 0.25)', width: 360, borderRadius: 25}}>
 
-          <FlatList style={{ flex: 1, width: 360, maxHeight: '100%',}} numColumns={1} horizontal={false} data={Object.keys(groups)} renderItem={({item}) => {
+          <FlatList style={{ flex: 1, maxHeight: '100%', }} numColumns={1} horizontal={false} data={Object.keys(groups)} renderItem={({item}) => {
             return (
               <TouchableOpacity style={listStyles.listItem} onPress={() => navigation.navigate('Group', {groupId: item, data: groups[item]})}>
                 <Icon name='people-circle-outline' size={30} color='white' style={{paddingRight: 12,}}/>
@@ -96,7 +78,7 @@ const FriendGroups = ({ navigation }) => {
                   <Text style={{...styles.bodyText, color: '#F2BE5C', textAlign: 'left'}} numberOfLines={1} ellipsizeMode='tail'>
                     {groups[item].groupname}
                   </Text>
-                  <Text style={{...styles.bodyText, textAlign: 'left', fontSize: 13}} numberOfLines={1} ellipsizeMode='tail'>
+                  <Text style={{fontFamily: 'Inter-Regular', fontSize: 12, color: 'white', textAlign: 'left', fontSize: 13}} numberOfLines={1} ellipsizeMode='tail'>
                     {groups[item].eventId === '' ? 'No event happening yet' : 'An event is happening!'}
                   </Text>
                 </View>
@@ -129,13 +111,26 @@ const FriendGroups = ({ navigation }) => {
 export default FriendGroups
 
 const listStyles = StyleSheet.create({
+
+  glassMorphism: {
+    backgroundImage: 'linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0))',
+    backdropFilter: "blur(10px)",
+
+  },
+
   listItem: {
     width: '100%',
-    height: 40,
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 12,
     marginBottom: 12, 
+    borderBottomColor: 'white',
+
+    width: 320,
+    borderWidth: 0,
+    borderColor: 'white',
+    padding: 10,
+    borderRadius: 10,
   }
 })
 

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import { BackgroundWrapper, BottomBackButton, SimpleInterfaceContainer, GhostTextInput, PrimaryButton } from '../../components'
+import { BackgroundWrapper, BottomBackButton, SimpleInterfaceContainer, GhostTextInput, PrimaryButton, Title } from '../../components'
 import styles from '../../assets/styles'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { collection, getDocs, getFirestore, where, query, addDoc } from 'firebase/firestore'
@@ -62,6 +62,7 @@ const AddFriend = ({ navigation, route }) => {
 
   return (
     <BackgroundWrapper>
+      <Title title='Add Friend'/>
       <SimpleInterfaceContainer>
         <Icon name="paper-plane" color={'white'} size={120}/>
         <Text style={styles.heading}>Invitation to join</Text>

@@ -1,6 +1,6 @@
     import { StyleSheet, Text, View, FlatList, TouchableOpacity,  } from 'react-native'
     import React, { useEffect, useState } from 'react'
-    import { BackgroundWrapper, SimpleInterfaceContainer } from '../../components'
+    import { BackgroundWrapper, SimpleInterfaceContainer, Title } from '../../components'
     import styles from '../../assets/styles'
     import Icon from 'react-native-vector-icons/Ionicons'
     import { getAuth } from 'firebase/auth'
@@ -37,9 +37,10 @@
         }, [])
         
         console.log('Object.keys(groupInvitations).length: ', Object.keys(groupInvitations).length);
-        if (true) {
+        if (Object.keys(groupInvitations).length !== 0 && Object.keys(eventInvitations).length !== 0) {
             return (
                 <BackgroundWrapper>
+                    <Title title='Notifications'/>
                     <SimpleInterfaceContainer style={{overflow: 'scroll', backgroundColor: 'rgba(0, 0, 0, 0.25)'}}>
                         <FlatList style={{ flex: 1, width: 360, maxHeight: '100%',}} numColumns={1} horizontal={false} data={Object.keys(groupInvitations)} renderItem={({item}) => {
                             return (
@@ -80,10 +81,11 @@
 
         return (
             <BackgroundWrapper>
-                <SimpleInterfaceContainer>
+                <Title title='Notifications'/>
+                <SimpleInterfaceContainer style={{backgroundColor: 'rgba(255, 255, 255, .10)', borderRadius: 25, width: 360, marginBottom :30}}>
                     <Icon name='notifications' color={'white'} size={120}/>
                     <View style={styles.textContainer}>
-                        <Text style={styles.bigHeading}>No notifications...</Text>
+                        <Text style={styles.bigHeading}>Nothing to see here</Text>
                     </View>
                     <View style={styles.textContainer}>
                         <Text style={styles.subHeading}>We'll let you know when there's something new!</Text>

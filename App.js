@@ -23,8 +23,8 @@ import { BackgroundWrapper } from './src/components'
 // Screen Imports from /main
 import MainScreen from './src/screens/Main'
 import HelpAndContactScreen from './src/screens/main/HelpAndContact'
-import EditProfileScreen from './src/screens/main/EditProfile'
-import DeleteAccountScreen from './src/screens/main/DeleteAccount'
+import EditProfileScreen from './src/screens/main/profile/EditProfile'
+import DeleteAccountScreen from './src/screens/main/profile/DeleteAccount'
 import GroupCreationScreen from './src/screens/main/GroupCreation'
 import GroupScreen from './src/screens/main/Group'
 import AddFriendScreen from './src/screens/main/AddFriend'
@@ -34,7 +34,6 @@ import EventInvitationScreen from './src/screens/main/EventInvitation'
 // Redux imports
 import { store } from './src/redux/store';
 import { Provider } from 'react-redux'
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyCC64AZAPEs1iIGAD9wUbUhGlC1GtMs5pE",
@@ -56,6 +55,7 @@ const AppWrapped = () => {
   const [fontsLoaded] = useFonts({
     'Inter-Bold': require('./src/assets/fonts/Inter/Inter-Bold.otf'),
     'Inter-ExtraBold': require('./src/assets/fonts/Inter/Inter-ExtraBold.otf'),
+    'Inter-Regular': require('./src/assets/fonts/Inter/Inter-Regular.otf')
   });  
 
   const auth = getAuth(app);
@@ -81,7 +81,7 @@ const AppWrapped = () => {
   if (!loggedIn) {
     return (
       <NavigationContainer>
-        <StatusBar style="light"/>
+        <StatusBar style='light'/>
         <SafeAreaProvider>
           <Stack.Navigator initialRouteName="Login">
               <Stack.Screen name="Login" component={LoginScreen} options={defaultScreenOptions}/>
@@ -97,7 +97,7 @@ const AppWrapped = () => {
   
   return (
     <NavigationContainer>
-      <StatusBar style="light"/>
+      <StatusBar style='light'/>
       <SafeAreaProvider>
         <Stack.Navigator initialRouteName="Main">
           <Stack.Screen name="Main" component={MainScreen} auth={auth} options={defaultScreenOptions}/>

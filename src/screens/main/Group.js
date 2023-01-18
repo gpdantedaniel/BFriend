@@ -1,31 +1,41 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
-import { BackgroundWrapper, SimpleInterfaceContainer, GhostTextInput, PrimaryButton, BottomBackButton, GhostButton } from '../../components'
+import { BackgroundWrapper, SimpleInterfaceContainer, GhostTextInput, PrimaryButton, BottomBackButton, GhostButton, Title } from '../../components'
 import styles from '../../assets/styles'
-import { addDoc, collection, doc, deleteDoc, getFirestore, onSnapshot, updateDoc, arrayRemove, deleteField, arrayUnion } from 'firebase/firestore'
+import { addDoc, collection, doc, deleteDoc, getFirestore, onSnapshot, updateDoc, arrayRemove, deleteField, arrayUnion, getDoc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 const Group = ({ navigation, route }) => {
-  const groupData = route.params.data;
-  console.log('groupData: ', groupData);
-  console.log(groupData.members.length);
-  console.log(groupData.members[0]);
+  const [groupData, setGroupData] = useState(route.params.data);
+  const [membersInfo, setMembersInfo] = useState({});
+
+  useEffect(() => {
+    // Get every member's username
+    const members = groupData.members;
+    members.forEach(memberId => {
+      const memberDocRef = doc(getFirestore(), 'users', memberId);
+      getDoc(memberDocRef).then((snapshot) => {
+        if (snapshot.exists) {
+          const data = snapshot.data();
+          setMembersInfo(loadedInfo => ({...loadedInfo, [memberId]: data}))
+        }
+      })
+    })
+  }, [groupData])
 
   const onLeave = () => {
     const groupId = route.params.groupId;
     const currentUserUid = getAuth().currentUser.uid;
     const groupDocRef = doc(getFirestore(), 'groups', groupId);
     const soleUser = groupData.members.length === 1 && groupData.members[0] == currentUserUid;
-    console.log('currentUserUid: ', currentUserUid);
-
+    
     const groupDocAction = soleUser ? (
       deleteDoc(groupDocRef)
     ) : (
       updateDoc(groupDocRef, {members: arrayRemove(currentUserUid)})
     );
 
-    console.log('groupDocAction: ', groupDocAction);
     groupDocAction.then(() => {
       const userDocRef = doc(getFirestore(), 'users', currentUserUid);
       updateDoc(userDocRef, {groups: arrayRemove(groupId)}).then(() => {
@@ -54,20 +64,20 @@ const Group = ({ navigation, route }) => {
 
     const eventDoc = await addDoc(eventsColRef, eventData);
     const eventId = eventDoc.id;
-
-    console.log('eventId: ', eventId);
     
     // Send an invitation to every user's 'eventIntiations' collection
     groupData.members.forEach(memberId => {
-      const eventInvitationsColRef = collection(getFirestore(), 'users', memberId, 'eventInvitations');      
-      addDoc(eventInvitationsColRef, {
-        eventId: eventId,
-        groupId: route.params.groupId,
-        groupname: groupData.groupname,
-        members: groupData.members,
-      }).catch((error) => {
-        console.log(error);
-      })  
+      if (memberId != currentUserUid) {
+        const eventInvitationsColRef = collection(getFirestore(), 'users', memberId, 'eventInvitations');      
+        addDoc(eventInvitationsColRef, {
+          eventId: eventId,
+          groupId: route.params.groupId,
+          groupname: groupData.groupname,
+          members: groupData.members,
+        }).catch((error) => {
+          console.log(error);
+        })  
+      }
     })
     
     // Add the eventId to the user's 'events' property
@@ -85,62 +95,67 @@ const Group = ({ navigation, route }) => {
     });
 
     navigation.navigate('Events');
-
   }
   
   if (Object.keys(groupData).length !== 0) {
     return (
       <BackgroundWrapper>
         <View style={{flexDirection: 'column', overflow: 'scroll', display: 'flex', maxHeight: '100%', flex: 1, width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-        
-          <View style={{...localStyles.translucidInterface, flex: 1, marginTop: 20, marginBottom: 10,}}>
+          <Title title={groupData.groupname}/>
+          <View style={{...localStyles.translucidInterface, flex: 1, marginBottom: 10, justifyContent: 'space-between'}}>
 
             <View style={{alignItems: 'flex-start', width: 300}}>
-              <Text style={{...styles.bigHeading, fontSize: 19}}>{groupData.groupname}</Text>
-              
+              <Text style={{...styles.subHeading, color: '#F2BE5C'}}>Group Friends</Text>
               <FlatList 
                 style={{overflow: 'hidden', maxWidth: '100%'}}
                 numColumns={1} 
                 horizontal={false} 
-                data={groupData.members}  
+                data={Object.keys(membersInfo)}  
                 renderItem={({item}) => (
                 <TouchableOpacity style={{paddinTop: 10, height: 30, justifyContent: 'center'}}>
-                  <View style={{flexDirection: 'row'}} >
+                  <View style={{flexDirection: 'row', alignItems: 'center'}} >
                     <Icon name='person' size={15} color='white'/>
-                    <Text style={{...styles.bodyText, fontSize: 13, paddingLeft: 10}} numberOfLines={1} ellipsizeMode='tail'>{item}{item}</Text>
+                    <Text style={{fontFamily: 'Inter-Regular', color: 'white', fontSize: 15, paddingLeft: 10}} numberOfLines={1} ellipsizeMode='tail'>
+                      {membersInfo[item].username}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               )}/>
-
             </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 300}}>
               <GhostButton title='Leave' style={{width: 140}} onPress={() => onLeave()}/>
-              <GhostButton title='Add' onPress={() => navigation.navigate('AddFriend', {groupId: route.params.groupId, groupData})} style={{width: 140}}/>
+              <GhostButton title='+ Add' onPress={() => navigation.navigate('AddFriend', {groupId: route.params.groupId, groupData})} style={{width: 140}}/>
             </View>
           </View>
   
-          <View style={{...localStyles.translucidInterface, marginTop: 10, marginBottom: 20,}}>
+          <View style={{...localStyles.translucidInterface, marginTop: 10}}>
                     
-            { true ? (
+            { groupData.eventId === '' ? (
               <View style={{alignItems: 'flex-start', width: 300}}>
                 <Text style={{...styles.bigHeading, fontSize: 19}}>
                   Group Event
                 </Text>
                 <Text style={{...styles.bodyText, paddingTop: 7, paddingBottom: 7, textAlign: 'left'}}>
-                  No event at the moment... 😔
-                </Text>
-                <Text style={{...styles.bodyText, paddingTop: 7, paddingBottom: 7, textAlign: 'left'}}>
-                  Tell the others that you’re ready to do something today!
+                  No event at the moment... Tell the others that you’re available!
                 </Text>
                 <PrimaryButton title="Let's do something!" style={{marginTop: 10, marginBottom: 0,}} onPress={() => onStartEvent()}/>
               </View>
             ):(
-              <Text>Event!</Text>
+              <View style={{alignItems: 'flex-start', width: 300}}>
+                <Text style={{...styles.bigHeading, fontSize: 19}}>
+                  Group Event
+                </Text>
+                <Text style={{...styles.bodyText, paddingTop: 7, paddingBottom: 7, textAlign: 'left'}}>
+                  Everyone's getting together, join now!
+                </Text>
+                <PrimaryButton title="Join Event" style={{marginTop: 10, marginBottom: 0,}} onPress={() => onStartEvent()}/>
+              </View>
+
             )}
   
           </View>
         </View>
-        <BottomBackButton onPress={() => navigation.goBack()}/>
+        <BottomBackButton style={{marginTop: 30}} onPress={() => navigation.goBack()}/>
 
       </BackgroundWrapper>
     )
@@ -157,7 +172,7 @@ export default Group
 const localStyles = StyleSheet.create({
   translucidInterface: {
     backgroundColor: 'rgba(0, 0, 0, 0.25)',
-    width: 340,
+    width: 360,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
